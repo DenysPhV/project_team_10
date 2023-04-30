@@ -5,6 +5,7 @@ from datetime import date, timedelta
 import re
 import pickle
 import os
+from termcolor import colored, cprint
 
 
 NOT_DEFINED = "not defined"
@@ -495,9 +496,11 @@ RESPONSE = {
 
 def main():
     while True:
-        line = input(">> ").lower()
+        input_cmd = colored("Enter command:", "blue")
+        line = input(input_cmd).lower()
         if line in exit_list:
-            print(">> Good bye!")
+            out_goodbye = colored(">> Good bye!", "blue")
+            print(out_goodbye)
             break
         else:
             for word in COMMANDS:
@@ -533,8 +536,11 @@ if __name__ == "__main__":
         print(">> address book was succesfully read")
         # contact_book.print()
     else:
-        print(f">> address book {ADRESSBOOK} was not found")
+        out_text = colored(f">> address book {ADRESSBOOK} was not found", "red")
+        print(out_text)
 
     main()
-    print(">> address book saved to " + ADRESSBOOK)
+    out_save = colored(">> address book saved to ", "yellow")
+    out_address_book = colored(ADRESSBOOK, "red")
+    print(out_save + out_address_book)
     contact_book.save_to_file(ADRESSBOOK)
