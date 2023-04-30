@@ -533,11 +533,11 @@ if __name__ == "__main__":
     if (os.path.exists(ADRESSBOOK)):
         contact_book = contact_book.read_from_file(ADRESSBOOK)
         restore_contacts()
-        print(">> address book was succesfully read")
+        print(colored(">> address book was succesfully read", "yellow"))
         # contact_book.print()
     else:
-        out_text = colored(f">> address book {ADRESSBOOK} was not found", "red")
-        print(out_text)
+        out_address_book_not = colored(f">> address book {ADRESSBOOK} was not found", "red")
+        print(out_address_book_not)
 
     main()
     out_save = colored(">> address book saved to ", "yellow")
