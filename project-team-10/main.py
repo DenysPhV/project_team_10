@@ -1,11 +1,14 @@
-import time
-import sys
+import time, os, pickle, re, sys, shutil
 from collections import UserDict
 from datetime import date, timedelta
+
 import re
 import pickle
 import os
 from termcolor import colored, cprint
+
+from pathlib import Path
+
 
 
 NOT_DEFINED = "not defined"
@@ -231,9 +234,10 @@ PHONE_CMD = "phone"
 SHOW_CMD = "show all"
 HLP_CMD = "help"
 SRCH_CMD = "search"
+SORT_CMD = 'sort'
 
 COMMANDS = [HELLO_CMD, ADD_CMD, CHANGE_CMD,
-            PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD]
+            PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD, SORT_CMD]
 
 
 def parser(line):
@@ -437,6 +441,48 @@ def show(list=[]):
     return "Done"
 
 
+def sorting(path):
+    find = re.findall(r'[a-zA-Z:\\+\-()]*$', path[0])
+    folder = find[0]
+    img = ('JPEG', 'PNG', 'JPG', 'SVG')
+    vid = ('AVI', 'MP4', 'MOV', 'MKV')
+    doc = ('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX')
+    muz = ('MP3', 'OGG', 'WAV', 'AMR')
+    arch = ('ZIP', 'GZ', 'TAR')
+
+    Path(folder + '/' + 'images').mkdir(exist_ok=False)
+    Path(folder + '/' + 'video').mkdir(exist_ok=True)
+    Path(folder + '/' + 'documents').mkdir(exist_ok=True)
+    Path(folder + '/' + 'audio').mkdir(exist_ok=True)
+    Path(folder + '/' + 'archives').mkdir(exist_ok=True)
+
+    for i in Path(folder).glob('**\*'):
+
+        if i.name == 'images' or i.name == 'video' or i.name == 'documents' or i.name == 'audio' or i.name == 'archives':
+            continue
+        if i.is_dir():
+            continue
+        if i.suffix.upper()[1:] in img:
+            Path(i).rename(folder + r'\\images'+ '\\' + i.name)
+        elif i.suffix.upper()[1:] in vid:
+            Path(i).rename(folder + r'\\video'+ '\\' + i.name)
+        elif i.suffix.upper()[1:] in doc:
+            Path(i).rename(folder + r'\\documents'+ '\\' + i.name)
+        elif i.suffix.upper()[1:] in muz:
+            Path(i).rename(folder + r'\\audio'+ '\\' + i.name)
+        elif i.suffix.upper()[1:] in arch:
+            try:
+                shutil.unpack_archive(
+                    Path(i), folder + r'\\archives' + '\\' + i.name)
+            except:
+                continue
+
+    for empty in Path(folder).glob('**/*'):
+        if empty.is_dir() and not list(empty.glob('*')):
+            empty.rmdir()
+
+
+
 def help(list=[]):
     return """\n
 * add - add a contact and a phone\n  
@@ -480,17 +526,19 @@ PARSER = {
     PHONE_CMD: lambda x: re.findall(PHONE_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     SHOW_CMD: lambda x: re.findall(SHOW_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     HLP_CMD: lambda x: re.findall(HLP_CMD, x),
-    SRCH_CMD: lambda x: re.findall(SRCH_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x)
+    SRCH_CMD: lambda x: re.findall(SRCH_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
+    SORT_CMD: lambda x: re.findall(SORT_CMD + "[ ]*[a-zA-Z:\\\+\-()]*", x)
 }
 
-RESPONSE = {
+RESPONSE = { 
     HELLO_CMD: greet,
     ADD_CMD: add_contact,
     CHANGE_CMD: change,
     PHONE_CMD: phone,
     SHOW_CMD: show,
     HLP_CMD: help,
-    SRCH_CMD: search
+    SRCH_CMD: search,
+    SORT_CMD : sorting
 }
 
 

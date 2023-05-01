@@ -7,48 +7,90 @@ from pathlib import Path
 class Notes:
    
    @staticmethod
-   def add_note():
-      ...
+   def add_note(note, tag, text):
+      filename = note + ".txt"
+      full_path = os.path.join(Path().resolve(), "notes", filename)
+      create_dict_note = {
+         "note": note, 
+         "tag": tag, 
+         "text": "\n"+text
+      }
 
+      if not os.path.isfile(full_path):
+
+         with open(full_path, 'w', encoding="utf8") as file:
+            for k, v in create_dict_note.items():
+               file.writelines(f"{k}: {v}\n")
+               print(file)
+         return f"Your new note with name '{note}' is created in folder 'notes'"
+      
+      return f"Note with name '{note}' is already exist in folder 'notes'"
+   
+   @staticmethod
    def read_note():
       ...
 
+   @staticmethod
    def update_note():
       ...
 
-   def delete_note():
-      ...
+   @staticmethod
+   def delete_note(note):
+        filename = note + ".txt"
+        full_path = os.path.join(Path().resolve(), "notes", filename)
 
+        if os.path.isfile(full_path):
+            os.remove(full_path)
+            return f"Your note with name '{note}' was deleted from folder 'notes'"
+        else:
+            return f"Note with name '{note}' was not found in folder 'notes'"
+   
+   @staticmethod
    def show_all_note():
-      ...
+      folder = os.path.join(Path().resolve(), "notes")
+      create_list_notes = []
 
+      for filename in os.listdir(folder):
+         create_list_notes.append(filename)
+
+      if len(create_list_notes) == 0:
+         return f"Your notebook is still empty.\nPlease add your first note"
+      else:
+         first_string = "Your notebook has the following notes:\n"
+         note_lines = "\n".join(str(record) for record in list(create_list_notes))
+         return first_string + note_lines
+   
+   @staticmethod
    def find_by_tag_note():
       ...
-
+   
+   @staticmethod
    def find_by_name_note():
       ...
 
+# >>>>> here start class CLI <<<<<
+NOTES = Notes() 
+
+def is_exist(note):
+   filename = note + ".txt"
+   full_path = os.path.join(Path().resolve(), "notes", filename)
+   if os.path.exists(full_path):
+      return True
+   return False
+   
+
+def command_error_handler(func):
+   @functools.wraps(func)
+
+   def wrapper(*args):
+      try:
+         return func(*args)
+      except (ValueError, KeyError, Exception) as err:
+         return str(err)
+         
+   return wrapper
 class CLINotes:
    
-
-   def is_exist(note):
-      filename = note + ".txt"
-      full_path = os.path.join(Path().resolve(), "notes", filename)
-      if os.path.exists(full_path):
-         return True
-      return False
-   
-
-   def command_error_handler(func):
-      @functools.wraps(func)
-
-      def wrapper(*args):
-         try:
-            return func(*args)
-         except (ValueError, KeyError, Exception) as err:
-            return str(err)
-         
-      return wrapper
 
    @staticmethod
    def help_handler():
@@ -67,40 +109,66 @@ class CLINotes:
     - delete tag -> to delete existing tag in note (recommend to read note first);
     - delete text -> to delete existing text in note (recommend to read note first);
     """)
+   
+   @command_error_handler
+   def add_note_handler(self=None):
+      note = input("Enter note: ")
+      if note == "":
+         return f"You haven't enter, try again please"
+      
+      elif is_exist(note):
+         return f"Note with name '{note}' is already exist in folder 'notes'"
+      
+      else: 
+         tag = input("Please enter tags (start with #, space to divide): ")
+         text = input("Please enter text for note: ")
+         return NOTES.add_note(note, tag, text)
 
-   def add_note_handler():
-      ...
-
+   @command_error_handler
    def read_note_handler():
       ...
 
-   def delete_note_handler():
-      ...  
+   @command_error_handler
+   def delete_note_handler(self=None):
+      note = input("Enter note which want to delete it (without '.txt'): ")
 
+      if note != "":
+         return NOTES.delete_note(note)
+      return "Name of note is missed. Please try again"
+   
+   @command_error_handler
    def find_tag_handler():
       ...  
-
+   
+   @command_error_handler
    def find_note_handler():
       ...
-
-   def show_all_handler():
-      ...
-
+   
+   @command_error_handler
+   def show_all_handler(self=None):
+      return NOTES.show_all_note()
+   
+   @command_error_handler
    def add_tag_handler():
       ...
-
+   
+   @command_error_handler
    def add_text_handler():
       ...
-
+   
+   @command_error_handler
    def change_tag_handler():
       ...
-
+   
+   @command_error_handler
    def change_text_handler():
       ...
-
+   
+   @command_error_handler
    def delete_tag_handler():
       ...
-
+   
+   @command_error_handler
    def delete_text_handler():
       ...
 
