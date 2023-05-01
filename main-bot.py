@@ -5,6 +5,7 @@ from datetime import date, timedelta
 import re
 import pickle
 import os
+import _osx_support
 
 
 NOT_DEFINED = "not defined"
