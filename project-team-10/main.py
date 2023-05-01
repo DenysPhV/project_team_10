@@ -1,7 +1,14 @@
 import time, os, pickle, re, sys, shutil
 from collections import UserDict
 from datetime import date, timedelta
+
+import re
+import pickle
+import os
+from termcolor import colored, cprint
+
 from pathlib import Path
+
 
 
 NOT_DEFINED = "not defined"
@@ -537,9 +544,11 @@ RESPONSE = {
 
 def main():
     while True:
-        line = input(">> ").lower()
+        input_cmd = colored("Enter command:", "blue")
+        line = input(input_cmd).lower()
         if line in exit_list:
-            print(">> Good bye!")
+            out_goodbye = colored(">> Good bye!", "blue")
+            print(out_goodbye)
             break
         else:
             for word in COMMANDS:
@@ -572,11 +581,14 @@ if __name__ == "__main__":
     if (os.path.exists(ADRESSBOOK)):
         contact_book = contact_book.read_from_file(ADRESSBOOK)
         restore_contacts()
-        print(">> address book was succesfully read")
+        print(colored(">> address book was succesfully read", "yellow"))
         # contact_book.print()
     else:
-        print(f">> address book {ADRESSBOOK} was not found")
+        out_address_book_not = colored(f">> address book {ADRESSBOOK} was not found", "red")
+        print(out_address_book_not)
 
     main()
-    print(">> address book saved to " + ADRESSBOOK)
+    out_save = colored(">> address book saved to ", "yellow")
+    out_address_book = colored(ADRESSBOOK, "red")
+    print(out_save + out_address_book)
     contact_book.save_to_file(ADRESSBOOK)
