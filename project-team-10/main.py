@@ -588,7 +588,8 @@ if __name__ == "__main__":
         print(out_address_book_not)
 
     main()
-    out_save = colored(">> address book saved to ", "yellow")
-    out_address_book = colored(ADRESSBOOK, "red")
-    print(out_save + out_address_book)
-    contact_book.save_to_file(ADRESSBOOK)
+    if len(contact_book) != 0:
+        out_save = colored(">> address book saved to ", "yellow")
+        out_address_book = colored(ADRESSBOOK, "red")
+        print(out_save + out_address_book)
+        contact_book.save_to_file(ADRESSBOOK)
