@@ -27,12 +27,39 @@ class Notes:
       return f"Note with name '{note}' is already exist in folder 'notes'"
    
    @staticmethod
-   def read_note():
-      ...
+   def read_note(note):
+      filename = note + ".txt"
+      full_path = os.path.join(Path().resolve(), "notes", filename)
+      note = ""
+      tag = ""
+      text = ""
+
+      if os.path.isfile(full_path):
+         with open(full_path, 'r', encoding="utf8") as file:
+            note_data = file.readlines()
+            for i, l in enumerate(note_data):
+               if i == 0:
+                  note = l.replace('\n', '')
+               elif i == 1:
+                  tag = l.replace('\n', '')
+               else:
+                  text += l
+         return f"{note}\n{tag}\n{text.strip()}"
+      return f"Note with name '{note}' was not found in folder 'notes'"
 
    @staticmethod
-   def update_note():
-      ...
+   def update_note(note, tag, text):
+      filename = note + ".txt"
+      full_path = os.path.join(Path().resolve(), "notes", filename)
+
+      if os.path.isfile(full_path):
+         with open(full_path, "w", encoding='utf8') as file:
+               file.writelines(f"note: {note}\n")
+               file.writelines(f"{tag}\n")
+               file.writelines(text)
+         return f"Note '{note}' was updated successfully!"
+     
+      return f"Note with name '{note}' was not found in folder 'notes'"
 
    @staticmethod
    def delete_note(note):
@@ -61,12 +88,38 @@ class Notes:
          return first_string + note_lines
    
    @staticmethod
-   def find_by_tag_note():
-      ...
+   def find_by_tag_note(tag):
+      folder = os.path.join(Path().resolve(), "notes")
+      create_list_notes = []
+
+      for filename in os.listdir(folder):
+            note_to_do = Notes.read_note(filename.split('.')[0])
+            tags = note_to_do.split('\n')[1].split()
+            if tag in tags:
+                create_list_notes.append(filename)
+
+      if len(create_list_notes) == 0:
+         return f"I can't find any note by this tag.\nPlease enter a valid note's tag for search."
+ 
+      first_string = "I found the following notes by your tag:\n"
+      note_names = "\n".join(str(record) for record in list(create_list_notes))
+      return first_string + note_names
    
    @staticmethod
-   def find_by_name_note():
-      ...
+   def find_by_name_note(note):
+      folder = os.path.join(Path().resolve(), "notes")
+      create_list_notes = []
+
+      for filename in os.listdir(folder):
+         if note in filename.split('.')[0]:
+                create_list_notes.append(filename)
+
+      if len(create_list_notes) == 0:
+            return f"I can't find any note that contain this name.\nPlease enter a valid note's name for search."
+  
+      first_string = "I found  the following notes by searching name:\n"
+      note_names = "\n".join(str(record) for record in list(create_list_notes))
+      return first_string + note_names
 
 # >>>>> here start class CLI <<<<<
 NOTES = Notes() 
@@ -125,9 +178,13 @@ class CLINotes:
          return NOTES.add_note(note, tag, text)
 
    @command_error_handler
-   def read_note_handler():
-      ...
+   def read_note_handler(self=None):
+      note = input("Please enter note which want to you read (without '.txt'): ")
 
+      if note != "":
+         return NOTES.read_note(note)
+      return "Note is missed. Please try again"
+      
    @command_error_handler
    def delete_note_handler(self=None):
       note = input("Enter note which want to delete it (without '.txt'): ")
@@ -137,40 +194,175 @@ class CLINotes:
       return "Name of note is missed. Please try again"
    
    @command_error_handler
-   def find_tag_handler():
-      ...  
+   def find_tag_handler(self=None):
+      tag = input("Please enter 1 tag to find notes (start with #): ") 
+
+      if tag != "":
+         return NOTES.find_by_tag_note(tag)
+      return "Tag for search is missed. Please try again"
    
    @command_error_handler
-   def find_note_handler():
-      ...
+   def find_note_handler(self=None):
+
+      note = input("To find note (without '.txt'): ")
+      if note != "":
+         return NOTES.find_by_name_note(note)
+   
+      return "Search is missed. Please try again"
    
    @command_error_handler
    def show_all_handler(self=None):
       return NOTES.show_all_note()
    
    @command_error_handler
-   def add_tag_handler():
-      ...
+   def add_tag_handler(self=None):
+      note = input("Note to update info (without '.txt'): ")
+
+      if is_exist(note):
+         tag = input("Please use first tag to add to this note (start with #): ")
+         note_to_read = NOTES.read_note(note)
+         old_tag = ""
+         old_text = ""
+
+         for i, item in enumerate(note_to_read.split('\n'), start=0):
+            if i == 1:
+               old_tag = item + " "
+
+         for i, item in enumerate(note_to_read.split('\n')[2:], start=0):
+            old_text += item + '\n'
+
+         return NOTES.update_note(note, old_tag + tag, old_text)
+      raise ValueError(f"Note with name '{note}' does not exist in notebook.")
    
    @command_error_handler
-   def add_text_handler():
-      ...
+   def add_text_handler(self=None):
+       note = input("Enter note to update info (without '.txt'): ")
+
+       if is_exist(note):
+         text = input("Please write text to add to the current note: ")
+         note_to_do = NOTES.read_note(note)
+         old_tag = ''
+         old_text = ''
+
+         for i, item in enumerate(note_to_do.split('\n'), start=0):
+            if i == 1:
+               old_tag = item
+
+         for i, item in enumerate(note_to_do.split('\n')[2:], start=0):
+            old_text += item + '\n'
+
+         return NOTES.update_note(note, old_tag, old_text + text)
+       raise ValueError(f"Note with name '{note}' does not exist in notebook.")
    
    @command_error_handler
-   def change_tag_handler():
-      ...
+   def change_tag_handler(self=None):
+      note = input("Please enter name of note to update info (without '.txt'): ")
+        
+      if is_exist(note):
+         note_to_do = NOTES.read_note(note)
+         tag_list = note_to_do.split('\n')[1]
+         new_tag = ''
+         new_text = ''
+
+         for i, item in enumerate(tag_list.split(), start=0):
+               print(i, item)
+         tag_index = int(input("Please enter index of tag that you want to change: "))
+         tag = input("Please write new tag to add instead old to the current note: ")
+
+         for i, item in enumerate(tag_list.split(), start=0):
+               if i == tag_index:
+                  item = tag
+               new_tag += item + ' '
+
+         for i, item in enumerate(note_to_do.split('\n')[2:], start=0):
+               new_text += item + '\n'
+
+         return NOTES.update_note(note, new_tag, new_text)
+     
+      raise ValueError(f"Note with name '{note}' does not exist in notebook.")
    
    @command_error_handler
-   def change_text_handler():
-      ...
+   def change_text_handler(self=None):
+      note = input("Please enter name of note to update info (without '.txt'): ")
+        
+      if is_exist(note):
+         note_to_do = NOTES.read_note(note)
+         new_tag = ''
+         new_text = ''
+
+         for i, item in enumerate(note_to_do.split('\n')[2:], start=0):
+               print(i, item)
+
+         text_index = int(input("Please enter index of text that you want to change: "))
+         text = input("Please write new text to add instead old to the current note: ")
+
+         for i, item in enumerate(note_to_do.split('\n'), start=0):
+            if i == 1:
+                    new_tag = item
+
+         for i, item in enumerate(note_to_do.split('\n')[2:], start=0):
+
+            if i == text_index:
+                  item = text
+            new_text += item + '\n'
+
+            return NOTES.update_note(note, new_tag, new_text)
+        
+         raise ValueError(f"Note with name '{note}' does not exist in notebook.")
+      
    
    @command_error_handler
-   def delete_tag_handler():
-      ...
+   def delete_tag_handler(self=None):
+      note = input("Please enter name of note to update info (without '.txt'): ")
+        
+      if is_exist(note):
+         note_to_do = NOTES.read_note(note)
+         tag_list = note_to_do.split('\n')[1]
+         new_tag = ''
+         new_text = ''
+
+         for i, item in enumerate(tag_list.split(), start=0):
+               print(i, item)
+         tag_index = int(input("Please enter index of tag that you want to delete: "))
+
+         for i, item in enumerate(tag_list.split(), start=0):
+               if i == tag_index:
+                  item = ""
+               new_tag += item + ' '
+
+         for i, item in enumerate(note_to_do.split('\n')[2:], start=0):
+               new_text += item + '\n'
+
+         return NOTES.update_note(note, new_tag.strip(), new_text)
+     
+      raise ValueError(f"Note with name '{note}' does not exist in notebook.")
    
    @command_error_handler
-   def delete_text_handler():
-      ...
+   def delete_text_handler(self=None):
+      note = input("Please enter name of note to update info (without '.txt'): ")
+        
+      if is_exist(note):
+         note_to_do = NOTES.read_note(note)
+         tag_list = note_to_do.split('\n')[1]
+         new_tag = ''
+         new_text = ''
+
+         for i, item in enumerate(note_to_do.split('\n')[2:], start=0):
+               print(i, item)
+         text_index = int(input("Please enter index of text that you want to delete: "))
+
+         for i, item in enumerate(tag_list.split('\n'), start=0):
+               if i == 0:
+                  new_tag = item
+
+         for i, item in enumerate(note_to_do.split('\n')[2:], start=0):
+               if i == text_index:
+                  item = ''
+               new_text += item + '\n'
+
+         return NOTES.update_note(note, new_tag, new_text.strip())
+ 
+      raise ValueError(f"Note with name '{note}' does not exist in notebook.")
 
    commands_dict = {
         "help": help_handler,
