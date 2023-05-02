@@ -1,4 +1,9 @@
-import time, os, pickle, re, sys, shutil
+import time
+import os
+import pickle
+import re
+import sys
+import shutil
 from collections import UserDict
 from datetime import date, timedelta
 
@@ -9,7 +14,6 @@ from termcolor import colored, cprint
 
 from pathlib import Path
 # from .notes import CLINotes
-
 
 
 NOT_DEFINED = "not defined"
@@ -54,14 +58,24 @@ class AddressBook(UserDict):
         for name in self.data:
             self.data[name].print()
 
+    def find_name(self, strname):
+        for record in self.data:
+            if strname == record:
+                return self.data[record]
+        return Record(Name(NOT_DEFINED))
+
+    def remove(self, name):
+        self.data.pop(name)
+
 
 class Record:  # responsible for the record manipulation
 
     def __init__(self, name):
         self.name = name  # type of Name
-        self.phone = []
-        self.email = []
+        self.phone = []  # list of phones
+        self.email = []  # list of e-mails
         self.birthday = Birthday()
+        self.add = Address()
 
     def set_birthday(self, s):
         self.birthday.day = check_birthday(s)
@@ -82,7 +96,7 @@ class Record:  # responsible for the record manipulation
                 nextbirthday = date(
                     year=today.year, month=birthday.month, day=birthday.day)
             delta = nextbirthday - today
-            return (f"Days left: {delta.days}")
+            return delta.days
         else:
             return "No date of birth defined yet"
 
@@ -110,9 +124,6 @@ class Record:  # responsible for the record manipulation
         except ValueError:
             return f"can not remove phone {strphone}: does not exist"
 
-    def edit_phone(phone):  # to be defined in next H/W
-        pass
-
     def add_email(self, email):
         self.email.append(email)
         return (f"add email: {email.value}")
@@ -125,28 +136,88 @@ class Record:  # responsible for the record manipulation
         except ValueError:
             return f"can not remove email {stremail}: does not exist"
 
-    def edit_email(email):  # to be defined in next H/W
-        pass
-
     def print_phones(self):
-        print("Phones: ")
+        # output = "Phones: "
+        output = ""
         for phone in self.phone:
-            print(phone.value)
+            output += phone.value + " "
+        return output
 
     def print_emails(self):
-        print("Emails: ")
+        # print("Emails: ")
+        output = ""
         for email in self.email:
-            print(email.value)
+            output += email.value + " "
+        return output
+
+    def edit_address(self, newaddress):
+        self.add.update(newaddress)
+
+    def print_address(self):
+        return self.add.value
+
+    def create_output_line(self, index):
+        output = []
+        if index == 0:
+            output.append(self.name.value)
+            if len(self.phone) > 0:
+                output.append(self.phone[0].value)
+            else:
+                output.append("")
+
+            if len(self.email) > 0:
+                output.append(self.email[0].value)
+            else:
+                output.append("")
+
+            if self.birthday.day != "":
+                output.append(self.birthday.day)
+            else:
+                output.append("")
+
+            if self.add.value != NOT_DEFINED:
+                output.append(self.add.value)
+            else:
+                output.append("")
+        else:
+            output = [""]
+            if len(self.phone) > index:
+                output.append(self.phone[index].value)
+            else:
+                output.append("")
+
+            if len(self.email) > index:
+                output.append(self.email[index].value)
+            else:
+                output.append("")
+            output.append("")
+            output.append("")
+        return output
 
     def print(self):
-        print("Name: " + self.name.value)
-        self.print_phones()
-        self.print_emails()
+        m1 = len(self.phone)
+        m2 = len(self.email)
+        if m1 > m2:
+            m = m1
+        else:
+            m = m2
+        print("-" * 160)
+        for i in range(m):
+            output = self.create_output_line(i)
+            # print(output)
+            print(" {:^20} | {:^20}| {:^20} | {:^20} | {:^20} ".format(
+                output[0], output[1], output[2], output[3], output[4]))
+
+    def edit_birthday(self, new):
+        self.birthday.update(new)
 
 
 class Field:  # defines general fields properties TBD
     def __init__(self, value):
         self.value = value
+
+    def update(self, newvalue):
+        self.value = newvalue
 
 
 class Name(Field):  # mandatory field
@@ -158,11 +229,11 @@ class Phone(Field):  # nonmandatory field
     def __init__(self, phone=NOT_DEFINED):
         self.__value = phone
 
-    @property  # define getter
+    @ property  # define getter
     def value(self):
         return self.__value
 
-    @value.setter  # define setter
+    @ value.setter  # define setter
     def value(self, val):
         match = re.fullmatch(
             r"[+]?[1-9]{1,2}(\([1-9]{3}\)|[1-9]{3})[1-9]{3}[-]?[0-9]{2}[-]?[0-9]{2}", val)
@@ -174,7 +245,20 @@ class Phone(Field):  # nonmandatory field
 
 class Email(Field):  # nonmandatory field
     def __init__(self, email=NOT_DEFINED):
-        self.value = email
+        self.__value = email
+
+    @ property  # getter
+    def value(self):
+        return self.__value
+
+    @ value.setter  # setter
+    def value(self, val):
+        match = re.fullmatch(
+            r"[a-zA-Z\.\-_0-9]+@[a-zA-Z0-9]+[\.][a-zA-Z]{2}", val)
+        if not match:
+            raise ValueError(">> Email name is not correct. \n")
+        else:
+            self.__value = val
 
 
 class Birthday:
@@ -182,11 +266,11 @@ class Birthday:
     def __init__(self):
         self.__birthday = ""
 
-    @property  # define getter
+    @ property  # define getter
     def day(self):
         return self.__birthday
 
-    @day.setter  # define setter
+    @ day.setter  # define setter
     def day(self, val):
         match = re.fullmatch(r"^[1-9][0-9]{3}\/[0-9]{2}\/[0-9]{2}", val)
         if not match:
@@ -194,14 +278,22 @@ class Birthday:
         else:
             self.__birthday = val
 
+    def update(self, newbirth):
+        self.__birthday = newbirth.day
+
+
+class Address(Field):
+    def __init__(self, add=NOT_DEFINED):
+        self.value = add
+
 
 def do_something():
-    output = """ here we created the following classes:\n 
-    - AdressBook \n 
-    - Record \n 
-    - Field \n 
-    - Name \n 
-    - Phone \n 
+    output = """ here we created the following classes:\n
+    - AdressBook \n
+    - Record \n
+    - Field \n
+    - Name \n
+    - Phone \n
     - Email \n
     and added some functionality which will be developed in the next H/Ws"""
     print(output)
@@ -235,10 +327,14 @@ PHONE_CMD = "phone"
 SHOW_CMD = "show all"
 HLP_CMD = "help"
 SRCH_CMD = "search"
-SORT_CMD = 'sort'
+EDT_CMD = "edit"
+RMV_CMD = "remove"
+EMAIL_CMD = "email"
+CONGRAT_CMD = "birthday"
 
 COMMANDS = [HELLO_CMD, ADD_CMD, CHANGE_CMD,
-            PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD, SORT_CMD]
+            PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD,
+            EDT_CMD, RMV_CMD, EMAIL_CMD, CONGRAT_CMD]
 
 
 def parser(line):
@@ -253,6 +349,15 @@ UNDERSTOOD = "Understood"
 def wait():
     print(">> Please wait....")
     time.sleep(2)
+
+
+def check_number(num):
+    match = re.fullmatch("^[0-9]+$", num)
+    while not match:
+        print(">> Please input correct number. It should include only digits")
+        num = input(">> ").lower()
+        match = re.fullmatch("^[0-9]+$", num)
+    return num
 
 
 def check_name(name):
@@ -314,7 +419,7 @@ def change_process(words):
         print(">> " + "It is all right. Will change " + name + " " + phone)
         wait()
     else:  # all arguments were missing only add
-        print(">> " + "Found command change in your request. Will need name and phone of the contact")
+        print(">> " + "Found command change in your request. Will need name and a new phone of the contact")
         name = check_name("-1")  # check the name
         print(">> " + "Need phone info for " + name)
         phone = check_phone("-1")  # check the phone
@@ -333,6 +438,18 @@ def phone_process(words):
     return command + " " + name
 
 
+def email_process(words):
+    command = words[0]
+    if len(words) == 2:  # all required arguments were taken
+        name = check_name(words[1])  # check the name
+        print(">> " + "It is all right. Will chase for the email of " + name)
+        wait()
+    else:  # all arguments were missing only add
+        print(">> " + "Found command email in your request. Will need name of the contact")
+        name = check_name("-1")  # check the name
+    return command + " " + name
+
+
 def search_process(words):
     command = words[0]
     if len(words) < 2:
@@ -345,10 +462,44 @@ def search_process(words):
     return command + " " + what
 
 
+def edit_process(words):
+    command = words[0]
+    if len(words) < 2:
+        name = check_name("-1")
+    else:
+        name = check_name(words[1])
+    return command + " " + name
+
+
+def remove_process(words):
+    command = words[0]
+    if len(words) < 2:
+        name = check_name("-1")
+    else:
+        name = check_name(words[1])
+    return command + " " + name
+
+
+def birthday_process(words):
+    command = words[0]
+    if len(words) == 2:  # all required arguments were taken
+        days = check_number(words[1])  # check the name
+        print(">> " + "It is all right. Will chase for the names who will have birthday in " + days + "  days")
+        wait()
+    else:  # all arguments were missing only add
+        print(">> " + "Found command birthday in your request. Will need number of days")
+        days = check_number("-1")  # check the name
+    return command + " " + days
+
+
 PROCESS = {ADD_CMD: add_process,
            CHANGE_CMD: change_process,
            PHONE_CMD: phone_process,
-           SRCH_CMD: search_process
+           SRCH_CMD: search_process,
+           EDT_CMD: edit_process,
+           RMV_CMD: remove_process,
+           EMAIL_CMD: email_process,
+           CONGRAT_CMD: birthday_process
            }
 
 
@@ -373,7 +524,7 @@ def greet(list=[]):
     return GREETING
 
 
-@input_error
+@ input_error
 def add_contact(list):  # list contains lists of possible actions to add
     # print(list)
     output = ""
@@ -382,7 +533,6 @@ def add_contact(list):  # list contains lists of possible actions to add
         # print(words)
         name = words[1]
         phone = words[2]
-        CONTACTS[name] = phone
         # will add the contact into the address book
         title = Name(name)
         person = Record(title)
@@ -392,53 +542,69 @@ def add_contact(list):  # list contains lists of possible actions to add
     return "Added " + output + "into the contacts"
 
 
-@input_error
+@ input_error
 def change(list):  # list contains lists of possible actions to add
     # print(list)
     output = ""
     for record in list:
         words = record.split()
         name = words[1]
-        found = CONTACTS.get(name, 0)
+        found_record = contact_book.find_name(name)
         # print(found)
-        if found:
-            old_phone = CONTACTS[name]
-            contact_book.get(name).remove_phone(old_phone)  # remove old phone
+        if found_record.name.value != NOT_DEFINED:
+            found_record.print()
+            print(">> please specify which phone you would like to change?")
+            old_phone = input(">> ").lower()
+            old_phone = check_phone(old_phone)
+            # remove old phone
+            print(">> " + contact_book.get(name).remove_phone(old_phone))
             phone = words[2]
             contact_book.get(name).add_phone(Phone(phone))  # add new phone
-            CONTACTS[name] = phone
+            found_record.print()
             output += name + " "
         else:
             print(">> Sorry, there is no contact called " + name + ". Skipped")
     return "Phones were modified for: " + output
 
 
-@input_error
+@ input_error
 def phone(list):  # list contains lists of possible actions to add
     # print(list)
-    print("-" * 36)
-    print("{:^36}|".format("Current list of the contacts"))
-    print("-" * 36)
     for record in list:
         words = record.split()
         name = words[1]
-        found = CONTACTS.get(name, 0)
+        found_record = contact_book.find_name(name)
         # print(found)
-        if found:
-            print("{:^16} | {:^16} |".format(name, CONTACTS[name]))
-            print("-" * 36)
+        if found_record.name.value != NOT_DEFINED:
+            print(f">> {name}:" + found_record.print_phones())
+        else:
+            print(">> Sorry, there is no contact called " + name + ". Skipped")
+    return "Done"
+
+
+@ input_error
+def email(list):  # list contains lists of possible actions to add
+    # print(list)
+    for record in list:
+        words = record.split()
+        name = words[1]
+        found_record = contact_book.find_name(name)
+        # print(found)
+        if found_record.name.value != NOT_DEFINED:
+            print(f">> {name}:" + found_record.print_emails())
         else:
             print(">> Sorry, there is no contact called " + name + ". Skipped")
     return "Done"
 
 
 def show(list=[]):
-    print("-" * 36)
-    print("{:^36}|".format("Current list of the contacts"))
-    print("-" * 36)
-    for contact in CONTACTS:
-        print("{:^16} | {:^16} |".format(contact, CONTACTS[contact]))
-        print("-" * 36)
+    # print("-" * 36)
+    # print("{:^36}|".format("Current list of the contacts"))
+    # print("-" * 36)
+    # for contact in CONTACTS:
+    #    print("{:^16} | {:^16} |".format(contact, CONTACTS[contact]))
+    #    print("-" * 36)
+    contact_book.print()
     return "Done"
 
 
@@ -464,13 +630,13 @@ def sorting(path):
         if i.is_dir():
             continue
         if i.suffix.upper()[1:] in img:
-            Path(i).rename(folder + r'\\images'+ '\\' + i.name)
+            Path(i).rename(folder + r'\\images' + '\\' + i.name)
         elif i.suffix.upper()[1:] in vid:
-            Path(i).rename(folder + r'\\video'+ '\\' + i.name)
+            Path(i).rename(folder + r'\\video' + '\\' + i.name)
         elif i.suffix.upper()[1:] in doc:
-            Path(i).rename(folder + r'\\documents'+ '\\' + i.name)
+            Path(i).rename(folder + r'\\documents' + '\\' + i.name)
         elif i.suffix.upper()[1:] in muz:
-            Path(i).rename(folder + r'\\audio'+ '\\' + i.name)
+            Path(i).rename(folder + r'\\audio' + '\\' + i.name)
         elif i.suffix.upper()[1:] in arch:
             try:
                 shutil.unpack_archive(
@@ -483,17 +649,20 @@ def sorting(path):
             empty.rmdir()
 
 
-
 def help(list=[]):
     return """\n
-* add - add a contact and a phone\n  
+* add - add a contact and a phone\n
 * change - change a contact phone \n
 * phone - list a phone of the contact \n
+* email - list an email of the contact \n
 * show all - list all the contacts \n
+* remove - remove record \n
+* edit - edit record (append phones, emails) \n
+* search - search records according to input text \n
 * help - list menu of the commands \n"""
 
 
-@input_error
+@ input_error
 def search(list):
     users = ""
     for record in list:
@@ -516,6 +685,106 @@ def search(list):
             return "users found: " + users
 
 
+@ input_error
+def edit(list):
+    for record in list:
+        words = record.split()
+        name = words[1]  # read name
+        record = contact_book.find_name(name)
+        # print(record.name)
+        if record.name.value == NOT_DEFINED:
+            print(">> contact " + name + " does not exist. Skip")
+        else:
+            record.print()
+            print(">> would you like to append phone ?[y/n]")
+            reponse = input(">> ").lower()
+            if reponse == "y":
+                print(">> please input correct phone kind of +1(647)861-90-06")
+                phone = input(">> ").lower()
+                try:
+                    newphone = Phone()
+                    newphone.value = phone
+                    record.add_phone(newphone)
+                    wait()
+                    record.print()
+                except ValueError as msg:
+                    print(msg)
+
+            print(">> would you like to append email ?[y/n]")
+            reponse = input(">> ").lower()
+            if reponse == "y":
+
+                print(">> please input e-mail kind of ali-mak@gmail.ca")
+                email = input(">> ").lower()
+                try:
+                    newemail = Email()
+                    newemail.value = email
+                    record.add_email(newemail)
+                    wait()
+                    record.print()
+                except ValueError as msg:
+                    print(msg)
+
+            print(">> would you like to edit adress ?[y/n]")
+            reponse = input(">> ").lower()
+            if reponse == "y":
+                print(">> please input your full address")
+                address = input(">> ").lower()
+                record.edit_address(address)
+                wait()
+                record.print()
+
+            print(">> would you like to input birthday? [y/n]")
+            reponse = input(">> ").lower()
+            if reponse == "y":
+                print(">> please input date kind of yyyy/mm/dd")
+                birthday = input(">> ").lower()
+                try:
+                    newday = Birthday()
+                    newday.day = birthday
+                    record.edit_birthday(newday)
+                    wait()
+                    record.print()
+                except ValueError as msg:
+                    print(msg)
+    return "Done"
+
+
+@ input_error
+def remove(list):
+    for record in list:
+        words = record.split()
+        name = words[1]  # read name
+        record = contact_book.find_name(name)
+        if record.name.value == NOT_DEFINED:
+            print(">> contact " + name + " does not exist. Skip")
+        else:
+            record.print()
+            print(
+                ">> are are you sure that you want to remove this record completely? [y/n]")
+            reponse = input(">> ").lower()
+            if reponse == "y":
+                contact_book.remove(name)
+
+    return "Done"
+
+
+@ input_error
+def birthday(list):  # list contains lists of possible actions to add
+    # print(list)
+    output = ""
+    for record in list:
+        words = record.split()
+        days = int(words[1])
+        for contact in contact_book.iterator():
+            contact_record = contact[0]
+            name = contact_record.name.value
+            # print(date.today() + timedelta(days=58))
+            if contact_record.days_to_birthday() == days:
+                output += name + " "
+    return "birthday have: " + output
+
+
 def command_parser(line):
     return re.findall("add[ ]+[a-zA-Z]+[ ]+[+][1-9][(][0-9]{3}[)][0-9]{3}-[0-9]{4}", line)
 
@@ -525,31 +794,36 @@ PARSER = {
     ADD_CMD: lambda x: re.findall(ADD_CMD + "[ ]*[a-zA-Z0-9\+\-()]*[ ]*[a-zA-Z0-9\+\-()]*", x),
     CHANGE_CMD: lambda x: re.findall(CHANGE_CMD + "[ ]*[a-zA-Z0-9\+\-()]*[ ]*[a-zA-Z0-9\+\-()]*", x),
     PHONE_CMD: lambda x: re.findall(PHONE_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
+    EMAIL_CMD: lambda x: re.findall(EMAIL_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     SHOW_CMD: lambda x: re.findall(SHOW_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     HLP_CMD: lambda x: re.findall(HLP_CMD, x),
     SRCH_CMD: lambda x: re.findall(SRCH_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
-    SORT_CMD: lambda x: re.findall(SORT_CMD + "[ ]*[a-zA-Z:\\\+\-()]*", x)
+    EDT_CMD: lambda x: re.findall(EDT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
+    RMV_CMD: lambda x: re.findall(RMV_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
+    CONGRAT_CMD: lambda x: re.findall(
+        CONGRAT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x)
 }
 
-RESPONSE = { 
+RESPONSE = {
     HELLO_CMD: greet,
     ADD_CMD: add_contact,
     CHANGE_CMD: change,
     PHONE_CMD: phone,
+    EMAIL_CMD: email,
     SHOW_CMD: show,
     HLP_CMD: help,
     SRCH_CMD: search,
-    SORT_CMD : sorting
+    EDT_CMD: edit,
+    RMV_CMD: remove,
+    CONGRAT_CMD: birthday
 }
 
 
 def main():
     while True:
-        input_cmd = colored("Enter command:", "blue")
-        line = input(input_cmd).lower()
+        line = input(">> ").lower()
         if line in exit_list:
-            out_goodbye = colored(">> Good bye!", "blue")
-            print(out_goodbye)
+            print(">> Good bye!")
             break
         else:
             for word in COMMANDS:
@@ -557,11 +831,6 @@ def main():
                 if len(command_list):
                     handler = RESPONSE[word]
                     print(">> " + str(handler(command_list)))
-
-
-def restore_contacts():
-    for record in contact_book.iterator():
-        CONTACTS[record[0].name.value] = record[0].phone[0].value
 
 
 # print(check_phone("+386478617006"))
@@ -575,22 +844,21 @@ def restore_contacts():
 # print(handler(command_line))
 # wait()
 if __name__ == "__main__":
-    
+
     CONTACTS = {}  # dictionary of the contacts
     contact_book = AddressBook()  # address book of contacts
 
     if (os.path.exists(ADRESSBOOK)):
         contact_book = contact_book.read_from_file(ADRESSBOOK)
-        restore_contacts()
         print(colored(">> address book was succesfully read", "yellow"))
         # contact_book.print()
     else:
-        out_address_book_not = colored(f">> address book {ADRESSBOOK} was not found", "red")
+        out_address_book_not = colored(
+            f">> address book {ADRESSBOOK} was not found", "red")
         print(out_address_book_not)
 
     main()
-    if len(contact_book) != 0:
-        out_save = colored(">> address book saved to ", "yellow")
-        out_address_book = colored(ADRESSBOOK, "red")
-        print(out_save + out_address_book)
-        contact_book.save_to_file(ADRESSBOOK)
+    out_save = colored(">> address book saved to ", "yellow")
+    out_address_book = colored(ADRESSBOOK, "red")
+    print(out_save + out_address_book)
+    contact_book.save_to_file(ADRESSBOOK)
