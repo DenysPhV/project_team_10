@@ -8,6 +8,7 @@ import os
 from termcolor import colored, cprint
 
 from pathlib import Path
+from .notes import CLINotes
 
 
 
