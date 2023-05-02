@@ -8,7 +8,7 @@ import os
 from termcolor import colored, cprint
 
 from pathlib import Path
-from .notes import CLINotes
+# from .notes import CLINotes
 
 
 
@@ -575,7 +575,7 @@ def restore_contacts():
 # print(handler(command_line))
 # wait()
 if __name__ == "__main__":
-
+    
     CONTACTS = {}  # dictionary of the contacts
     contact_book = AddressBook()  # address book of contacts
 

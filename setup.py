@@ -1,12 +1,11 @@
 from setuptools import setup, find_namespace_packages
 # Нужно доработать выкидывает ошибку "error in project-team-10 setup command: 'NoneType' object has no attribute 'group'"
 setup(
-    name='project-team-10',
-    version='1.0.0',
-    description='Package with scripts for using CLI Bot assistant',
-    url='https://github.com/DenysPhV/project-team-10',
+    name='project_team_10',
+    version='1.0.5',
+    description='Package with scripts for using Bot assistant',
+    url='https://github.com/DenysPhV/project_team_10',
     author='team-10',
-    # keywords="README.md",
     license="LICENSE",
     classifiers=[
           "Programming Language :: Python :: 3",
@@ -14,5 +13,5 @@ setup(
           "Operating System :: OS Independent",
         ],
     packages=find_namespace_packages(),
-    entry_points={'console_scripts': ["project-team-10=project-team-10.main:personal_assistant"]}
+    entry_points={'console_scripts': ["StartBot=project_team_10.main:main"]}
     )
