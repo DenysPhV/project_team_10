@@ -11,6 +11,7 @@ import pickle
 import os
 
 from pathlib import Path
+
 from  project_team_10 import CLINotes
 
 import tkinter as tk
@@ -359,10 +360,7 @@ PHONE_CMD = "phone"
 SHOW_CMD = "show all"
 HLP_CMD = "help"
 SRCH_CMD = "search"
-
 SORT_CMD = 'sort'
-NOTE_CMD = "notes"
-
 EDT_CMD = "edit"
 RMV_CMD = "remove"
 EMAIL_CMD = "email"
@@ -875,6 +873,7 @@ def main():
                 if len(command_list):
                     handler = RESPONSE[word]
                     print(">> " + str(handler(command_list)))
+
             
         # start command for notes from class CLINotes
         command = input("Enter notes for write them: ").strip()
@@ -922,3 +921,5 @@ if __name__ == "__main__":
         out_address_book = colored(ADRESSBOOK, "red")
         print(out_save + out_address_book)
         contact_book.save_to_file(ADRESSBOOK)
+    
+   
