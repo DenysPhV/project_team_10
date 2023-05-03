@@ -8,7 +8,7 @@ import os
 from termcolor import colored, cprint
 
 from pathlib import Path
-# from .notes import CLINotes
+from .notes import CLINotes
 
 
 
@@ -236,9 +236,10 @@ SHOW_CMD = "show all"
 HLP_CMD = "help"
 SRCH_CMD = "search"
 SORT_CMD = 'sort'
+NOTE_CMD = "notes"
 
 COMMANDS = [HELLO_CMD, ADD_CMD, CHANGE_CMD,
-            PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD, SORT_CMD]
+            PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD, SORT_CMD, NOTE_CMD]
 
 
 def parser(line):
@@ -344,11 +345,18 @@ def search_process(words):
         what = words[1]
     return command + " " + what
 
+# Denys work on here ====================================================
+def start_note_process():
+    command = input("Please enter notes for start write note: ").strip()
+
+    print(command) 
+
 
 PROCESS = {ADD_CMD: add_process,
            CHANGE_CMD: change_process,
            PHONE_CMD: phone_process,
-           SRCH_CMD: search_process
+           SRCH_CMD: search_process,
+           NOTE_CMD: start_note_process
            }
 
 

@@ -383,6 +383,7 @@ class CLINotes:
         "delete text": delete_text_handler,
         }
    
+   @staticmethod
    def run_notes():
       folder = os.path.join(Path().resolve(), "notes")
 
