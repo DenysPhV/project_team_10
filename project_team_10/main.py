@@ -11,7 +11,9 @@ import pickle
 import os
 
 from pathlib import Path
-from .notes import CLINotes
+
+#  import class of notes
+# from .notes import CLINotes
 
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -359,10 +361,7 @@ PHONE_CMD = "phone"
 SHOW_CMD = "show all"
 HLP_CMD = "help"
 SRCH_CMD = "search"
-
 SORT_CMD = 'sort'
-NOTE_CMD = "notes"
-
 EDT_CMD = "edit"
 RMV_CMD = "remove"
 EMAIL_CMD = "email"
@@ -498,12 +497,6 @@ def search_process(words):
         what = words[1]
     return command + " " + what
 
-# Denys work on here ====================================================
-def start_note_process():
-    command = input("Please enter notes for start write note: ").strip()
-
-    print(command) 
-
 
 def edit_process(words):
     command = words[0]
@@ -539,7 +532,6 @@ PROCESS = {ADD_CMD: add_process,
            CHANGE_CMD: change_process,
            PHONE_CMD: phone_process,
            SRCH_CMD: search_process,
-           NOTE_CMD: start_note_process,
            EDT_CMD: edit_process,
            RMV_CMD: remove_process,
            EMAIL_CMD: email_process,
@@ -875,6 +867,12 @@ def main():
                 if len(command_list):
                     handler = RESPONSE[word]
                     print(">> " + str(handler(command_list)))
+        
+        command = input("Enter 'notes' for start work with notes: ").strip()
+      
+        if command == "":
+            print("Error")
+        return 
 
 
 # print(check_phone("+386478617006"))
@@ -911,3 +909,5 @@ if __name__ == "__main__":
         out_address_book = colored(ADRESSBOOK, "red")
         print(out_save + out_address_book)
         contact_book.save_to_file(ADRESSBOOK)
+    
+   
