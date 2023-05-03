@@ -5,7 +5,7 @@ setup(
     version='1.0.5',
     description='Package with scripts for using Bot assistant',
     url='https://github.com/DenysPhV/project_team_10',
-    author='team-10',
+    author='team_10',
     license="LICENSE",
     readme="README.md",
     classifiers=[
