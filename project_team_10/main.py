@@ -1,20 +1,17 @@
 import time
-import os
-import pickle
-import re
 import sys
 import shutil
 from collections import UserDict
 from datetime import date, timedelta
-
+from termcolor import colored
+import colorama
+colorama.init()
 import re
 import pickle
 import os
-from termcolor import colored, cprint
 
 from pathlib import Path
 from .notes import CLINotes
-
 
 import tkinter as tk
 from PIL import Image, ImageTk
