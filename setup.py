@@ -1,5 +1,5 @@
 from setuptools import setup, find_namespace_packages
-# Нужно доработать выкидывает ошибку "error in project-team-10 setup command: 'NoneType' object has no attribute 'group'"
+
 setup(
     name='project_team_10',
     version='1.0.5',
@@ -7,6 +7,7 @@ setup(
     url='https://github.com/DenysPhV/project_team_10',
     author='team-10',
     license="LICENSE",
+    readme="README.md",
     classifiers=[
           "Programming Language :: Python :: 3",
           "License :: OSI Approved :: MIT License",

@@ -13,7 +13,7 @@ import os
 from termcolor import colored, cprint
 
 from pathlib import Path
-# from .notes import CLINotes
+from .notes import CLINotes
 
 
 import tkinter as tk
@@ -362,6 +362,10 @@ PHONE_CMD = "phone"
 SHOW_CMD = "show all"
 HLP_CMD = "help"
 SRCH_CMD = "search"
+
+SORT_CMD = 'sort'
+NOTE_CMD = "notes"
+
 EDT_CMD = "edit"
 RMV_CMD = "remove"
 EMAIL_CMD = "email"
@@ -370,6 +374,7 @@ CONGRAT_CMD = "birthday"
 COMMANDS = [HELLO_CMD, ADD_CMD, CHANGE_CMD,
             PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD,
             EDT_CMD, RMV_CMD, EMAIL_CMD, CONGRAT_CMD]
+
 
 
 def parser(line):
@@ -496,6 +501,12 @@ def search_process(words):
         what = words[1]
     return command + " " + what
 
+# Denys work on here ====================================================
+def start_note_process():
+    command = input("Please enter notes for start write note: ").strip()
+
+    print(command) 
+
 
 def edit_process(words):
     command = words[0]
@@ -531,6 +542,7 @@ PROCESS = {ADD_CMD: add_process,
            CHANGE_CMD: change_process,
            PHONE_CMD: phone_process,
            SRCH_CMD: search_process,
+           NOTE_CMD: start_note_process,
            EDT_CMD: edit_process,
            RMV_CMD: remove_process,
            EMAIL_CMD: email_process,
@@ -897,7 +909,8 @@ if __name__ == "__main__":
         print(out_address_book_not)
 
     main()
-    out_save = colored(">> address book saved to ", "yellow")
-    out_address_book = colored(ADRESSBOOK, "red")
-    print(out_save + out_address_book)
-    contact_book.save_to_file(ADRESSBOOK)
+    if len(contact_book) != 0:
+        out_save = colored(">> address book saved to ", "yellow")
+        out_address_book = colored(ADRESSBOOK, "red")
+        print(out_save + out_address_book)
+        contact_book.save_to_file(ADRESSBOOK)
