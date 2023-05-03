@@ -12,12 +12,10 @@ import os
 
 from pathlib import Path
 
-
 from  project_team_10 import CLINotes
 
 import tkinter as tk
 from PIL import Image, ImageTk
-
 
 class Logo_Image:
     def __init__(self, title="Volkan", geometry="300x400", image="Volkan.png", button_img="button.png"):
