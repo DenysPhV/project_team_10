@@ -2,5 +2,5 @@
 
 # Personal-helper-TM
 
-install -> py setup.py install
-start work -> StartBot
+<p>install -> pip install StartBot</p>
+<p>start work -> StartBot</p>

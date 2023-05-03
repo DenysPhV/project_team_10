@@ -12,7 +12,8 @@ import os
 
 from pathlib import Path
 
-from  project_team_10 import CLINotes
+from notes import CLINotes
+
 
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -694,7 +695,9 @@ def help(list=[]):
 * remove - remove record \n
 * edit - edit record (append phones, emails) \n
 * search - search records according to input text \n
-* help - list menu of the commands \n"""
+* help - list menu of the commands \n
+* notes - skip to notes \n
+"""
 
 
 @ input_error
