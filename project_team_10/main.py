@@ -11,7 +11,7 @@ import pickle
 import os
 
 from pathlib import Path
-from .notes import CLINotes
+from  project_team_10 import CLINotes
 
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -370,7 +370,7 @@ CONGRAT_CMD = "birthday"
 
 COMMANDS = [HELLO_CMD, ADD_CMD, CHANGE_CMD,
             PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD,
-            EDT_CMD, RMV_CMD, EMAIL_CMD, CONGRAT_CMD]
+            EDT_CMD, RMV_CMD, EMAIL_CMD, CONGRAT_CMD, NOTE_CMD]
 
 
 
@@ -498,12 +498,6 @@ def search_process(words):
         what = words[1]
     return command + " " + what
 
-# Denys work on here ====================================================
-def start_note_process():
-    command = input("Please enter notes for start write note: ").strip()
-
-    print(command) 
-
 
 def edit_process(words):
     command = words[0]
@@ -539,7 +533,6 @@ PROCESS = {ADD_CMD: add_process,
            CHANGE_CMD: change_process,
            PHONE_CMD: phone_process,
            SRCH_CMD: search_process,
-           NOTE_CMD: start_note_process,
            EDT_CMD: edit_process,
            RMV_CMD: remove_process,
            EMAIL_CMD: email_process,
@@ -845,7 +838,9 @@ PARSER = {
     EDT_CMD: lambda x: re.findall(EDT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     RMV_CMD: lambda x: re.findall(RMV_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     CONGRAT_CMD: lambda x: re.findall(
-        CONGRAT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x)
+        CONGRAT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
+    
+
 }
 
 RESPONSE = {
@@ -860,8 +855,13 @@ RESPONSE = {
     EDT_CMD: edit,
     RMV_CMD: remove,
     CONGRAT_CMD: birthday
+  
 }
 
+
+start_command_note = {
+    "notes": CLINotes.run_notes
+}
 
 def main():
     while True:
@@ -875,7 +875,18 @@ def main():
                 if len(command_list):
                     handler = RESPONSE[word]
                     print(">> " + str(handler(command_list)))
+            
+        # start command for notes from class CLINotes
+        command = input("Enter notes for write them: ").strip()
+        if command == '':
+             raise SystemError("\nThank you for using StartBot.\nSee you later! Take care of yourself!\n")
 
+        if command in start_command_note.keys():
+             handler = start_command_note[command]
+             answer = handler()
+             print(answer)
+        
+        print("Incorrect input.\nPlease check and enter correct command -> help.")
 
 # print(check_phone("+386478617006"))
 # print(check_name("+1(647)861 wrwf"))
