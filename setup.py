@@ -1,8 +1,8 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-    name='project_team_10',
-    version='1.0.8',
+    name='StartBot',
+    version='1.0.9',
     description='Package with scripts for using Bot assistant',
     url='https://github.com/DenysPhV/project_team_10',
     author='team_10',
