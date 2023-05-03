@@ -16,6 +16,40 @@ from pathlib import Path
 # from .notes import CLINotes
 
 
+import tkinter as tk
+from PIL import Image, ImageTk
+
+
+class Logo_Image:
+    def __init__(self, title="Volkan", geometry="600x800", image="Volkan.png", button_img="button.png"):
+        self.window = tk.Tk()
+        self.window.title(title)
+        self.window.geometry(geometry)
+
+        self.canvas = tk.Canvas(self.window, width=1265, height=800)
+        self.canvas.place(x=-1, y=-1)
+        self.img = Image.open("Volkan.png")
+
+        self.resized_image = self.img.resize((600, 800), Image.ANTIALIAS)
+        self.bgImage = ImageTk.PhotoImage(self.resized_image)
+        self.bg = self.canvas.create_image(
+            0, 0, image=self.bgImage, anchor=tk.NW)
+
+        self.img1 = Image.open(button_img)
+        self.resized_button = self.img1.resize((220, 80), Image.ANTIALIAS)
+        self.bgBtn = ImageTk.PhotoImage(self.resized_button)
+
+        self.button = self.canvas.create_image(300, 730, image=self.bgBtn)
+        self.canvas.tag_bind(self.button, "startbot_btn",
+                             self.click_button_event)
+
+    def run(self):
+        self.window.mainloop()
+
+    def click_button_event(self):
+        self.window.destroy()
+
+
 NOT_DEFINED = "not defined"
 ADRESSBOOK = "book.bin"
 
@@ -845,7 +879,11 @@ def main():
 # wait()
 if __name__ == "__main__":
 
-    CONTACTS = {}  # dictionary of the contacts
+    # CONTACTS = {}  # dictionary of the contacts
+
+    window = Logo_Image()
+    window.run()
+
     contact_book = AddressBook()  # address book of contacts
 
     if (os.path.exists(ADRESSBOOK)):
