@@ -40,13 +40,14 @@ class Logo_Image:
         self.bgBtn = ImageTk.PhotoImage(self.resized_button)
 
         self.button = self.canvas.create_image(300, 730, image=self.bgBtn)
-        self.canvas.tag_bind(self.button, "startbot_btn",
+        # self.command = lambda: self.click_button_event()
+        self.canvas.tag_bind(self.button, "<Button-1>",
                              self.click_button_event)
 
     def run(self):
         self.window.mainloop()
 
-    def click_button_event(self):
+    def click_button_event(self, event):
         self.window.destroy()
 
 
