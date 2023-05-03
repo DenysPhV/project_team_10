@@ -1,3 +1,4 @@
-include .gitignore
 include README.md
-include requirements.txt
+include project_team_10/button.png
+include project_team_10/Volkan.png
+include project_team_10/image
