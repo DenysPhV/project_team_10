@@ -12,6 +12,7 @@ import os
 
 from pathlib import Path
 
+
 from  project_team_10 import CLINotes
 
 import tkinter as tk
@@ -19,26 +20,27 @@ from PIL import Image, ImageTk
 
 
 class Logo_Image:
-    def __init__(self, title="Volkan", geometry="600x800", image="Volkan.png", button_img="button.png"):
+    def __init__(self, title="Volkan", geometry="300x400", image="Volkan.png", button_img="button.png"):
         self.window = tk.Tk()
         self.window.title(title)
         self.window.geometry(geometry)
+        self.window.resizable(width=False, height=False)
 
-        self.canvas = tk.Canvas(self.window, width=1265, height=800)
+        self.canvas = tk.Canvas(self.window, width=600, height=400)
         self.canvas.place(x=-1, y=-1)
         self.img = Image.open("Volkan.png")
 
-        self.resized_image = self.img.resize((600, 800), Image.ANTIALIAS)
+        self.resized_image = self.img.resize((300, 400), Image.ANTIALIAS)
         self.bgImage = ImageTk.PhotoImage(self.resized_image)
         self.bg = self.canvas.create_image(
             0, 0, image=self.bgImage, anchor=tk.NW)
 
         self.img1 = Image.open(button_img)
-        self.resized_button = self.img1.resize((220, 80), Image.ANTIALIAS)
+        self.resized_button = self.img1.resize((100, 30), Image.ANTIALIAS)
         self.bgBtn = ImageTk.PhotoImage(self.resized_button)
 
-        self.button = self.canvas.create_image(300, 730, image=self.bgBtn)
-        # self.command = lambda: self.click_button_event()
+        self.button = self.canvas.create_image(150, 365, image=self.bgBtn)
+        self.command = lambda: self.click_button_event()
         self.canvas.tag_bind(self.button, "<Button-1>",
                              self.click_button_event)
 
