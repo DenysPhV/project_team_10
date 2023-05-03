@@ -12,8 +12,7 @@ import os
 
 from pathlib import Path
 
-#  import class of notes
-# from .notes import CLINotes
+from  project_team_10 import CLINotes
 
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -369,7 +368,7 @@ CONGRAT_CMD = "birthday"
 
 COMMANDS = [HELLO_CMD, ADD_CMD, CHANGE_CMD,
             PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD,
-            EDT_CMD, RMV_CMD, EMAIL_CMD, CONGRAT_CMD]
+            EDT_CMD, RMV_CMD, EMAIL_CMD, CONGRAT_CMD, NOTE_CMD]
 
 
 
@@ -837,7 +836,9 @@ PARSER = {
     EDT_CMD: lambda x: re.findall(EDT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     RMV_CMD: lambda x: re.findall(RMV_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     CONGRAT_CMD: lambda x: re.findall(
-        CONGRAT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x)
+        CONGRAT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
+    
+
 }
 
 RESPONSE = {
@@ -852,8 +853,13 @@ RESPONSE = {
     EDT_CMD: edit,
     RMV_CMD: remove,
     CONGRAT_CMD: birthday
+  
 }
 
+
+start_command_note = {
+    "notes": CLINotes.run_notes
+}
 
 def main():
     while True:
@@ -867,13 +873,19 @@ def main():
                 if len(command_list):
                     handler = RESPONSE[word]
                     print(">> " + str(handler(command_list)))
-        
-        command = input("Enter 'notes' for start work with notes: ").strip()
-      
-        if command == "":
-            print("Error")
-        return 
 
+            
+        # start command for notes from class CLINotes
+        command = input("Enter notes for write them: ").strip()
+        if command == '':
+             raise SystemError("\nThank you for using StartBot.\nSee you later! Take care of yourself!\n")
+
+        if command in start_command_note.keys():
+             handler = start_command_note[command]
+             answer = handler()
+             print(answer)
+        
+        print("Incorrect input.\nPlease check and enter correct command -> help.")
 
 # print(check_phone("+386478617006"))
 # print(check_name("+1(647)861 wrwf"))
