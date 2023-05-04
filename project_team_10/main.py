@@ -17,6 +17,7 @@ colorama.init()
 
 dir_path = os.path.dirname(__file__)
 
+
 class Logo_Image:
     def __init__(self, title="Volkan", geometry="300x400", image="Volkan.png", button_img="button.png"):
         self.window = tk.Tk()
@@ -101,7 +102,7 @@ class AddressBook(UserDict):
     def remove(self, name):
         self.data.pop(name)
 
-
+contact_book = AddressBook() 
 class Record:  # responsible for the record manipulation
 
     def __init__(self, name):
@@ -909,7 +910,7 @@ def start():
     window = Logo_Image()
     window.run()
     # print(os.getcwd())
-    contact_book = AddressBook()  # address book of contacts
+    # contact_book = AddressBook()  # address book of contacts
 
     if (os.path.exists(ADRESSBOOK)):
         contact_book = contact_book.read_from_file(ADRESSBOOK)
