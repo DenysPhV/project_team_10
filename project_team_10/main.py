@@ -929,7 +929,7 @@ if __name__ == "__main__":
         print(out_address_book_not)
 
     main()
-    # we always save a book whatever it is beause it may be intentionally to remove all the records
+    # we always save a book whatever it is beсause it may be intentionally done to remove all the records
     out_save = colored(">> address book saved to ", "yellow")
     out_address_book = colored(ADRESSBOOK, "red")
     print(out_save + out_address_book)
