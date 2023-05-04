@@ -1,6 +1,5 @@
 from PIL import Image, ImageTk
 import tkinter as tk
-from notes import CLINotes
 from pathlib import Path
 import os
 import pickle
@@ -12,10 +11,9 @@ from collections import UserDict
 from datetime import date, timedelta
 from termcolor import colored
 import colorama
-colorama.init()
 
 from project_team_10.notes import CLINotes
-
+colorama.init()
 
 dir_path = os.path.dirname(__file__)
 
