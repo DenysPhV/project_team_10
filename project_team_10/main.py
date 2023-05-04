@@ -871,16 +871,19 @@ RESPONSE = {
 }
 
 
-# start_command_note = {
-#     "notes": CLINotes.run_notes
-# }
-
-
 def main():
     while True:
         line = input(">> ").lower()
         if line in exit_list:
+            
             print(">> Good bye!")
+
+            if len(contact_book) != 0:
+                out_save = colored(">> address book saved to ", "yellow")
+                out_address_book = colored(ADRESSBOOK, "red")
+                print(out_save + out_address_book)
+                contact_book.save_to_file(ADRESSBOOK)
+
             break
         else:
             for word in COMMANDS:
@@ -888,20 +891,6 @@ def main():
                 if len(command_list):
                     handler = RESPONSE[word]
                     print(">> " + str(handler(command_list)))
-
-        # start command for notes from class CLINotes
-        # command = input("Enter notes for write them: ").strip()
-        # if command == '':
-        #     raise SystemError(
-        #         "\nThank you for using Volkan.\nSee you later! Take care of yourself!\n")
-
-        # if command in start_command_note.keys():
-        #     handler = start_command_note[command]
-        #     answer = handler()
-        #     print(answer)
-
-        # print("Incorrect input.\nPlease check and enter correct command -> help.")
-
 
 
 def start():
@@ -923,11 +912,11 @@ def start():
 
     main()
 
-    if len(contact_book) != 0:
-        out_save = colored(">> address book saved to ", "yellow")
-        out_address_book = colored(ADRESSBOOK, "red")
-        print(out_save + out_address_book)
-        contact_book.save_to_file(ADRESSBOOK)
+    # if len(contact_book) != 0:
+    #     out_save = colored(">> address book saved to ", "yellow")
+    #     out_address_book = colored(ADRESSBOOK, "red")
+    #     print(out_save + out_address_book)
+    #     contact_book.save_to_file(ADRESSBOOK)
 
 # print(check_phone("+386478617006"))
 # print(check_name("+1(647)861 wrwf"))
