@@ -29,32 +29,32 @@ To deploy this project, type StartBot
 
 For working with address book, please use the following commands:
 
-- add - add a contact and a phone\n
-- change - change a contact phone \n
-- phone - list a phone of the contact \n
-- email - list an email of the contact \n
-- show all - list all the contacts \n
-- remove - remove record \n
-- birthday - show list of contacts who have birthday in defined number of days \n
-- edit - edit record (append phones, emails) \n
-- search - search records according to input text \n
-- help - list menu of the commands \n
-- notes - skip to notes \n
+- add - add a contact and a phone
+- change - change a contact phone
+- phone - list a phone of the contact
+- email - list an email of the contact
+- show all - list all the contacts
+- remove - remove record
+- birthday - show list of contacts who have birthday in defined number of days
+- edit - edit record (append phones, emails)
+- search - search records according to input text
+- help - list menu of the commands
+- notes - skip to notes
 
 For working with notes, please use the following commands:
 
 - add note -> to create new note and save into folder 'notes';
+- add tag -> to include additional tag to existing note;
+- add text -> to include additional text to existing note;
 - read note -> to open indicated note and read text inside;
 - delete note -> to delete indicated note from the folder;
 - find by tag -> to find all notes that are matched with this tag;
 - find by name -> to find notes that are matched with this name;
-- show all -> to show list of notes that were saved in folder;
-- add tag -> to include additional tag to existing note;
-- add text -> to include additional text to existing note;
 - change tag -> to change existing tag in note (recommend to read note first);
 - change text -> to change existing text in note (recommend to read note first);
 - delete tag -> to delete existing tag in note (recommend to read note first);
 - delete text -> to delete existing text in note (recommend to read note first);
+- show all -> to show list of notes that were saved in folder;
 
 ## Authors
 
