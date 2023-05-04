@@ -871,9 +871,9 @@ RESPONSE = {
 }
 
 
-start_command_note = {
-    "notes": CLINotes.run_notes
-}
+# start_command_note = {
+#     "notes": CLINotes.run_notes
+# }
 
 
 def main():
@@ -910,7 +910,7 @@ def start():
     window = Logo_Image()
     window.run()
     # print(os.getcwd())
-    # contact_book = AddressBook()  # address book of contacts
+    contact_book = AddressBook()  # address book of contacts
 
     if (os.path.exists(ADRESSBOOK)):
         contact_book = contact_book.read_from_file(ADRESSBOOK)
@@ -942,6 +942,7 @@ def start():
 if __name__ == "__main__":
 
     start()
+
     
    
 
