@@ -1,3 +1,10 @@
+from PIL import Image, ImageTk
+import tkinter as tk
+from notes import CLINotes
+from pathlib import Path
+import os
+import pickle
+import re
 import time
 import sys
 import shutil
@@ -6,17 +13,9 @@ from datetime import date, timedelta
 from termcolor import colored
 import colorama
 colorama.init()
-import re
-import pickle
-import os
-
-from pathlib import Path
 
 from project_team_10.notes import CLINotes
 
-
-import tkinter as tk
-from PIL import Image, ImageTk
 
 dir_path = os.path.dirname(__file__)
 
@@ -26,7 +25,7 @@ class Logo_Image:
         self.window.title(title)
         self.window.geometry(geometry)
         self.window.resizable(width=False, height=False)
-
+        print(os.getcwd())
         self.canvas = tk.Canvas(self.window, width=600, height=400)
         self.canvas.place(x=-1, y=-1)
         self.img = Image.open(os.path.join(dir_path, image))
@@ -54,6 +53,7 @@ class Logo_Image:
 
 NOT_DEFINED = "not defined"
 ADRESSBOOK = "book.bin"
+TELEPHONE = r"[+]380[(][0-9]{2}[)][0-9]{3}[-][0-9]{2}[-][0-9]{2} | [+]380[(][0-9]{2}[)][0-9]{3}[-][0-9]{1}[-][0-9]{3}"
 
 
 class AddressBook(UserDict):
@@ -368,11 +368,11 @@ EDT_CMD = "edit"
 RMV_CMD = "remove"
 EMAIL_CMD = "email"
 CONGRAT_CMD = "birthday"
+NOTES_CMD = "notes"
 
 COMMANDS = [HELLO_CMD, ADD_CMD, CHANGE_CMD,
             PHONE_CMD, SHOW_CMD, HLP_CMD, SRCH_CMD,
-            EDT_CMD, RMV_CMD, EMAIL_CMD, CONGRAT_CMD]
-
+            EDT_CMD, RMV_CMD, EMAIL_CMD, CONGRAT_CMD, NOTES_CMD]
 
 
 def parser(line):
@@ -414,7 +414,7 @@ def check_phone(phone):
         print(">> Please input correct phone. Typically it is +1(647)861-9006 or similar")
         phone = input(">> ").lower()
         match = re.fullmatch(
-            r"[+]?[0-9]{1,2}(\([0-9]{3}\)|[0-9]{3})[0-9]{3}[-]?[0-9]{2}[-]?[0-9]{2}", phone)
+            r"[+]?[1-9]{1,2}(\([1-9]{3}\)|[1-9]{3})[1-9]{3}[-]?[0-9]{2}[-]?[0-9]{2}", phone)
     return phone
 
 
@@ -695,6 +695,7 @@ def help(list=[]):
 * email - list an email of the contact \n
 * show all - list all the contacts \n
 * remove - remove record \n
+* birthday - show list of contacts who have birthday in defined number of days \n
 * edit - edit record (append phones, emails) \n
 * search - search records according to input text \n
 * help - list menu of the commands \n
@@ -812,6 +813,8 @@ def remove(list):
 @ input_error
 def birthday(list):  # list contains lists of possible actions to add
     # print(list)
+    if len(contact_book) == 0:
+        return "contact book is empty"
     output = ""
     for record in list:
         words = record.split()
@@ -823,6 +826,14 @@ def birthday(list):  # list contains lists of possible actions to add
             if contact_record.days_to_birthday() == days:
                 output += name + " "
     return "birthday have: " + output
+
+
+def start_notes(list=[]):  # list contains lists of possible actions to add
+    print(">> do you want to start working with notes ?[y/n]")
+    reponse = input(">> ").lower()
+    if reponse == "y":
+        CLINotes.run_notes()
+    return "continue with address book again"
 
 
 def command_parser(line):
@@ -842,8 +853,7 @@ PARSER = {
     RMV_CMD: lambda x: re.findall(RMV_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
     CONGRAT_CMD: lambda x: re.findall(
         CONGRAT_CMD + "[ ]*[a-zA-Z0-9\+\-()]*", x),
-    
-
+    NOTES_CMD: lambda x: re.findall(NOTES_CMD, x)
 }
 
 RESPONSE = {
@@ -857,14 +867,15 @@ RESPONSE = {
     SRCH_CMD: search,
     EDT_CMD: edit,
     RMV_CMD: remove,
-    CONGRAT_CMD: birthday
-  
+    CONGRAT_CMD: birthday,
+    NOTES_CMD: start_notes
 }
 
 
 start_command_note = {
     "notes": CLINotes.run_notes
 }
+
 
 def main():
     while True:
@@ -879,18 +890,19 @@ def main():
                     handler = RESPONSE[word]
                     print(">> " + str(handler(command_list)))
 
-            
         # start command for notes from class CLINotes
-        command = input("Enter notes for write them: ").strip()
-        if command == '':
-             raise SystemError("\nThank you for using StartBot.\nSee you later! Take care of yourself!\n")
+        # command = input("Enter notes for write them: ").strip()
+        # if command == '':
+        #     raise SystemError(
+        #         "\nThank you for using Volkan.\nSee you later! Take care of yourself!\n")
 
-        if command in start_command_note.keys():
-             handler = start_command_note[command]
-             answer = handler()
-             print(answer)
-        
-        print("Incorrect input.\nPlease check and enter correct command -> help.")
+        # if command in start_command_note.keys():
+        #     handler = start_command_note[command]
+        #     answer = handler()
+        #     print(answer)
+
+        # print("Incorrect input.\nPlease check and enter correct command -> help.")
+
 
 
 def start():
@@ -898,7 +910,7 @@ def start():
 
     window = Logo_Image()
     window.run()
-
+    # print(os.getcwd())
     contact_book = AddressBook()  # address book of contacts
 
     if (os.path.exists(ADRESSBOOK)):
@@ -911,6 +923,7 @@ def start():
         print(out_address_book_not)
 
     main()
+
     if len(contact_book) != 0:
         out_save = colored(">> address book saved to ", "yellow")
         out_address_book = colored(ADRESSBOOK, "red")
@@ -932,3 +945,4 @@ if __name__ == "__main__":
     start()
     
    
+
