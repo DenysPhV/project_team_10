@@ -14,6 +14,10 @@ from termcolor import colored
 import colorama
 colorama.init()
 
+from project_team_10.notes import CLINotes
+
+
+dir_path = os.path.dirname(__file__)
 
 class Logo_Image:
     def __init__(self, title="Volkan", geometry="300x400", image="Volkan.png", button_img="button.png"):
@@ -24,14 +28,14 @@ class Logo_Image:
         print(os.getcwd())
         self.canvas = tk.Canvas(self.window, width=600, height=400)
         self.canvas.place(x=-1, y=-1)
-        self.img = Image.open("Volkan.png")
+        self.img = Image.open(os.path.join(dir_path, image))
 
         self.resized_image = self.img.resize((300, 400), Image.ANTIALIAS)
         self.bgImage = ImageTk.PhotoImage(self.resized_image)
         self.bg = self.canvas.create_image(
             0, 0, image=self.bgImage, anchor=tk.NW)
 
-        self.img1 = Image.open(button_img)
+        self.img1 = Image.open(os.path.join(dir_path,button_img))
         self.resized_button = self.img1.resize((100, 30), Image.ANTIALIAS)
         self.bgBtn = ImageTk.PhotoImage(self.resized_button)
 
@@ -900,18 +904,8 @@ def main():
         # print("Incorrect input.\nPlease check and enter correct command -> help.")
 
 
-# print(check_phone("+386478617006"))
-# print(check_name("+1(647)861 wrwf"))
-# line = "add Alisa +16478617006 show all"
-# command_line = PARSER["add"](line)
-# handler = RESPONSE["add"]
-# print(handler(command_line))
-# 3command_line = PARSER["show"](line)
-# handler = RESPONSE["show"]
-# print(handler(command_line))
-# wait()
-if __name__ == "__main__":
 
+def start():
     # CONTACTS = {}  # dictionary of the contacts
 
     window = Logo_Image()
@@ -929,8 +923,26 @@ if __name__ == "__main__":
         print(out_address_book_not)
 
     main()
-    # we always save a book whatever it is beсause it may be intentionally done to remove all the records
-    out_save = colored(">> address book saved to ", "yellow")
-    out_address_book = colored(ADRESSBOOK, "red")
-    print(out_save + out_address_book)
-    contact_book.save_to_file(ADRESSBOOK)
+
+    if len(contact_book) != 0:
+        out_save = colored(">> address book saved to ", "yellow")
+        out_address_book = colored(ADRESSBOOK, "red")
+        print(out_save + out_address_book)
+        contact_book.save_to_file(ADRESSBOOK)
+
+# print(check_phone("+386478617006"))
+# print(check_name("+1(647)861 wrwf"))
+# line = "add Alisa +16478617006 show all"
+# command_line = PARSER["add"](line)
+# handler = RESPONSE["add"]
+# print(handler(command_line))
+# 3command_line = PARSER["show"](line)
+# handler = RESPONSE["show"]
+# print(handler(command_line))
+# wait()
+if __name__ == "__main__":
+
+    start()
+    
+   
+

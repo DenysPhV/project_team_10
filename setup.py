@@ -15,5 +15,6 @@ setup(
         ],
     packages=find_namespace_packages(),
     install_requires=['termcolor', 'colorama', 'Pillow'],
-    entry_points={'console_scripts': ["StartBot=project_team_10.main:start"]}
+    entry_points={'console_scripts': ["StartBot=project_team_10.main:start"]},
+    include_package_data=True
     )
