@@ -1,0 +1,4 @@
+note: presentation
+tag: #GoIT
+text: 
+need to prepare a presentatin for the Volkan bot
